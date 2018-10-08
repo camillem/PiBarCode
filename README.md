@@ -19,7 +19,7 @@ Usage
 -----
 ```php
 // initialisation
-$bc = new pi_barcode();
+$bc = new PiBarCode();
   
 // Code to generate
 $bc->setCode('123456789012');

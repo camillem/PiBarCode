@@ -113,8 +113,8 @@ $last_version = "V2.13" ;
 // ***** checkCode()                : V�rifie le CODE et positionne FULLCODE
 // ***** encode()                   : Converti FULLCODE en barres
 // *****
-if ( !class_exists( "pi_barcode" ) ) {
-	class pi_barcode
+if ( !class_exists( "PiBarCode" ) ) {
+	class PiBarCode
 	{
 		/**
 		* ***** D�finition des variables *****
@@ -1018,7 +1018,7 @@ if (strpos($_SERVER['PHP_SELF'], 'pi_barcode.php'))
 	extract($_GET);
 
 	// ***** Cr�ation de l'objet
-	$objCode = new pi_barcode() ;
+	$objCode = new PiBarCode();
 
 	$type = strtoupper($type);
 
