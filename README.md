@@ -1,4 +1,4 @@
-# pi_barcode
+# PiBarCode
 
 Composer ready for [pi_barcode](https://www.pitoo.com/codes-a-barres-p3).
 
