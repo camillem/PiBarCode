@@ -15,6 +15,13 @@ A php script that allows you to generate images or insert barcodes into your web
 - Codabar 
 - Code UPC / EAN 8 et 13
 
+Installation
+-----
+
+The best way to add the library to your project is using [composer](http://getcomposer.org).
+
+	$ composer require rafikhaceb/pi-barcode
+
 Usage
 -----
 ```php
