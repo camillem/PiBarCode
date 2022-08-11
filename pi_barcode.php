@@ -116,24 +116,76 @@ $last_version = "V2.13" ;
 if ( !class_exists( "PiBarCode" ) ) {
 	class PiBarCode
 	{
-		/**
-		* ***** Définition des variables *****
-		*/
+        const BLACK = '#000000';
+        const WHITE = '#FFFFFF';
+        /**
+         * @var string
+         */
+		private $CODE = '';
 
-		var $CODE;
-		var $FULLCODE;
-		var $TYPE;
-		var $HEIGHT;
-		var $WIDTH;
-		var $CODEWIDTH;
-		var $CALMZONE;
-		var $HR;
-		var $SHOWTYPE;
-		var $BACKGROUND;
-		var $FOREGROUND;
-		var $FILETYPE;
-		var $ENCODED;
-		var $IH = NULL;
+        /**
+         * @var string
+         */
+        private $FULLCODE = 'NO CODE SET';
+
+        /**
+         * @var string
+         */
+        private $TYPE = 'ERR';
+
+        /**
+         * @var int
+         */
+        private $HEIGHT = 15;
+
+        /**
+         * @var int
+         */
+        private $WIDTH = 0;
+
+        /**
+         * @var int
+         */
+        private $CODEWIDTH;
+
+        /**
+         * @var int
+         */
+        private $CALMZONE;
+        /**
+         * @var string
+         */
+        private $HR = 'HR';
+
+        /**
+         * @var string
+         */
+        private $SHOWTYPE = 'Y';
+
+        /**
+         * @var float|int
+         */
+        private $BACKGROUND;
+
+        /**
+         * @var float|int
+         */
+        private $FOREGROUND;
+
+        /**
+         * @var string
+         */
+        private $FILETYPE = 'PNG';
+
+        /**
+         * @var string
+         */
+        private $ENCODED = '';
+
+        /**
+         * @var null
+         */
+        private $IH = null;
 
 		/**
 		* Définition des symbologies
@@ -336,21 +388,8 @@ if ( !class_exists( "PiBarCode" ) ) {
 		*/
 		function __construct()
 		{
-			$this->CODE = '';
-			$this->FULLCODE = 'NO CODE SET';
-			$this->TYPE = 'ERR';
-			$this->HEIGHT = 15;
-			$this->WIDTH = 0;
-			$this->CALMZONE = 10;
-			$this->HR = 'AUTO';
-			$this->SHOWTYPE = 'Y';
-			$this->FOREGROUND = hexdec('#000000');
-			$this->BACKGROUND = hexdec('#FFFFFF');
-			$this->FILETYPE = 'PNG';
-			$this->ENCODED = '';
-			// détruire éventuellement l'image existante
-			if ($this->IH) imagedestroy($this->IH);
-			$this->IH = NULL;
+			$this->FOREGROUND = hexdec(self::BLACK);
+			$this->BACKGROUND = hexdec(self::WHITE);
 		}
 
 		/**
