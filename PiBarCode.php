@@ -193,7 +193,7 @@ class PiBarCode
     /**
      * Set Barcode Type
      */
-    function setType($type): void
+    public function setType($type): void
     {
         $this->type = $type;
     }
@@ -201,7 +201,7 @@ class PiBarCode
     /**
      * Set Barcode String
      */
-    function setCode($code): void
+    public function setCode($code): void
     {
         $this->code = $code;
     }
@@ -209,7 +209,7 @@ class PiBarCode
     /**
      * Set Image Height and Extra-Width
      */
-    function setSize($height, $width = 0, $calmZone = 0): void
+    public function setSize($height, $width = 0, $calmZone = 0): void
     {
         $this->height = (max($height, 15));
         $this->width = (max($width, 0));
@@ -219,7 +219,7 @@ class PiBarCode
     /**
      * Set the Printed Text under Bars
      */
-    function setText($text = 'AUTO'): void
+    public function setText($text = 'AUTO'): void
     {
         $this->hr = $text;
     }
@@ -227,7 +227,7 @@ class PiBarCode
     /**
      * Disable CodeType printing
      */
-    function hideCodeType(): void
+    public function hideCodeType(): void
     {
         $this->showType = 'N';
     }
@@ -235,7 +235,7 @@ class PiBarCode
     /**
      * Set Colors
      */
-    function setColors($fg, $bg = '#FFFFFF'): void
+    public function setColors($fg, $bg = '#FFFFFF'): void
     {
         $this->foreground = hexdec($fg);
         $this->background = hexdec($bg);
@@ -244,7 +244,7 @@ class PiBarCode
     /**
      * Set File Type (PNG, GIF or JPG)
      */
-    function setFileType($fileType = 'PNG'): void
+    public function setFileType($fileType = 'PNG'): void
     {
         $fileType = strtoupper($fileType);
         $this->fileType = 'PNG';
@@ -254,11 +254,49 @@ class PiBarCode
     }
 
     /**
+     * Show Image
+     */
+    public function showBarcodeImage()
+    {
+        $this->checkCode();
+        $this->encode();
+
+        if ($this->fileType == 'GIF') {
+            Header("Content-type: image/gif");
+            imagegif($this->ih);
+        } elseif ($this->fileType == 'JPG') {
+            Header("Content-type: image/jpeg");
+            imagejpeg($this->ih);
+        } else {
+            Header("Content-type: image/png");
+            imagepng($this->ih);
+        }
+    }
+
+    /**
+     * Save Image
+     */
+    public function writeBarcodeFile($file): void
+    {
+        $this->checkCode();
+        $this->encode();
+
+        if ($this->fileType == 'GIF') {
+            imagegif($this->ih, $file);
+        } elseif ($this->fileType == 'JPG') {
+            imagejpeg($this->ih, $file);
+        } else {
+            imagepng($this->ih, $file);
+        }
+    }
+
+
+    /**
      * Vérification du Code
      *
      * calcul ou vérification du Checksum
      */
-    function checkCode(): void
+    private function checkCode(): void
     {
         switch ($this->type) {
             case "C128C" :
@@ -490,7 +528,7 @@ class PiBarCode
      *
      * Encode des symboles (a-Z, 0-9, ...) vers des barres
      */
-    function encode(): void
+    private function encode(): void
     {
         settype($this->fullCode, 'string');
         $lencode = strlen($this->fullCode);
@@ -870,44 +908,6 @@ class PiBarCode
             } elseif ($this->type != "ERR") {
                 imagestringup($this->ih, 1, 0, $this->height - 2, $this->type, $color[2]);
             }
-        }
-    }
-
-
-    /**
-     * Show Image
-     */
-    function showBarcodeImage()
-    {
-        $this->checkCode();
-        $this->encode();
-
-        if ($this->fileType == 'GIF') {
-            Header("Content-type: image/gif");
-            imagegif($this->ih);
-        } elseif ($this->fileType == 'JPG') {
-            Header("Content-type: image/jpeg");
-            imagejpeg($this->ih);
-        } else {
-            Header("Content-type: image/png");
-            imagepng($this->ih);
-        }
-    }
-
-    /**
-     * Save Image
-     */
-    function writeBarcodeFile($file): void
-    {
-        $this->checkCode();
-        $this->encode();
-
-        if ($this->fileType == 'GIF') {
-            imagegif($this->ih, $file);
-        } elseif ($this->fileType == 'JPG') {
-            imagejpeg($this->ih, $file);
-        } else {
-            imagepng($this->ih, $file);
         }
     }
 }
