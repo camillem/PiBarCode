@@ -281,7 +281,7 @@ class PiBarCode
                 while (($carok) && ($i<$long))
                 {
                     $tmp = ord( $this->code{$i} ) ;
-                    if (($tmp < 32) OR ($tmp > 126)) $carok = false;
+                    if (($tmp < 32) || ($tmp > 126)) $carok = false;
                     $i++;
                 }
                 if ($carok) $this->fullCode = $this->code;
@@ -303,7 +303,7 @@ class PiBarCode
                 $factor = 3;
                 $checksum = 0;
 
-                if (preg_match("/^[0-9]{8}$/", $this->code) OR preg_match("/^[0-9]{13}$/", $this->code))
+                if (preg_match("/^[0-9]{8}$/", $this->code) || preg_match("/^[0-9]{13}$/", $this->code))
                 {
 
                     for ($index = ($long - 1); $index > 0; $index--)
@@ -321,7 +321,7 @@ class PiBarCode
                     else $this->fullCode = $this->code;
 
                 }
-                elseif (preg_match("/^[0-9]{7}$/", $this->code) OR preg_match("/^[0-9]{12}$/", $this->code))
+                elseif (preg_match("/^[0-9]{7}$/", $this->code) || preg_match("/^[0-9]{12}$/", $this->code))
                 {
 
                     for ($index = $long; $index > 0; $index--) {
@@ -440,7 +440,7 @@ class PiBarCode
               break;
             case "POSTNET" :
 
-                if (preg_match("/^[0-9]{5}$/", $this->code) OR preg_match("/^[0-9]{9}$/", $this->code) OR preg_match("/^[0-9]{11}$/", $this->code))
+                if (preg_match("/^[0-9]{5}$/", $this->code) || preg_match("/^[0-9]{9}$/", $this->code) || preg_match("/^[0-9]{11}$/", $this->code))
                 {
                     $checksum = 0;
                     $tmp = strlen($this->code);
@@ -680,10 +680,10 @@ class PiBarCode
                 {
                   case "EAN" :
                   case "UPC" :
-                    if($i<=2 OR $i>=($nb_elem-3) OR ($i>=($nb_elem/2)-2 AND $i<=($nb_elem/2)+2)) $intH-=6; else $intH-=11;
+                    if($i<=2 || $i>=($nb_elem-3) || ($i>=($nb_elem/2)-2 && $i<=($nb_elem/2)+2)) $intH-=6; else $intH-=11;
                   break;
                   default :
-                    if($i>0 AND $i<($nb_elem-1)) $intH-=11;
+                    if($i>0 && $i<($nb_elem-1)) $intH-=11;
                 }
             }
 
@@ -767,12 +767,12 @@ class PiBarCode
 
         // de temps à autre, ajouter pitoo.com *** Merci de ne pas supprimer cette fonction ***
         $ifw = imagefontwidth(1) * 9;
-        if ((rand(0,50)<1) AND ($this->height >= $ifw)) imagestringup($this->ih, 1, $nb_elem + 12, $this->height - 2, "Pitoo.com", $color[2]);
+        if ((rand(0,50)<1) && ($this->height >= $ifw)) imagestringup($this->ih, 1, $nb_elem + 12, $this->height - 2, "Pitoo.com", $color[2]);
 
         // impression du type de code (si demandé)
         if ($this->showType == 'Y')
         {
-            if (($this->type == "EAN") AND (strlen($this->fullCode) > 10) AND ($this->fullCode{0} > 0) AND ($text != ''))
+            if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0) && ($text != ''))
             {
                 imagestringup($this->ih, 1, 0, $this->height - 12, $this->type, $color[2]);
             }
