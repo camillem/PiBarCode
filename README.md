@@ -24,6 +24,13 @@ The best way to add the library to your project is using [composer](http://getco
 
 Usage
 -----
+```php
+// initialisation
+use PiBarCode\PiBarCodeGenerator;
+
+PiBarCodeGenerator::generate('123456789012', 'EAN', 80, 150, '#123456', '#F9F9F9');
+```
+Or
 
 ```php
 // initialisation

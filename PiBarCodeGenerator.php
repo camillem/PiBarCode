@@ -11,7 +11,7 @@ class PiBarCodeGenerator
         string $code,
         int $height = 80,
         int $width = 0,
-        string $color = '#000000',
+        string $foreground = '#000000',
         string $bgColor = '#FFFFFF',
         bool $readable = false,
         bool $showType = false
@@ -28,11 +28,11 @@ class PiBarCodeGenerator
             $barcode->hideCodeType();
         }
 
-        if ($color !== '') {
+        if ($foreground !== '') {
             if ($bgColor !== '') {
-                $barcode->setColors($color, $bgColor);
+                $barcode->setColors($foreground, $bgColor);
             } else {
-                $barcode->setColors($color);
+                $barcode->setColors($foreground);
             }
         }
 
