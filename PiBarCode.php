@@ -652,8 +652,6 @@ class PiBarCode
                 $this->height = 35;
                 break;
             case "ERR" :
-                $encodedString = '';
-
                 $this->codeWidth = (imagefontwidth(2) * $lencode);
                 $this->height = max($this->height, 36);
                 break;
@@ -912,55 +910,4 @@ class PiBarCode
             imagepng($this->ih, $file);
         }
     }
-
-}
-
-
-/**
- * Compatibilité avec les versions précédentes
- *
- * si appel direct de la bibliothèque, générer l'image à la volée
- */
-if (strpos($_SERVER['PHP_SELF'], 'PiBarCode.php')) {
-    $height = 80;
-    $width = 0;
-    $readable = 'N';
-    $showtype = 'N';
-    $color = '#000000';
-    $bgcolor = '#FFFFFF';
-    $zoom = 1;
-
-    extract($_GET);
-
-    // ***** Création de l'objet
-    $objCode = new PiBarCode();
-
-    $type = strtoupper($type);
-
-    // ***** Hauteur / Largeur
-    if (isset($height) || isset($width)) {
-        $objCode->setSize($height, $width);
-    }
-
-    // ***** Autres arguments
-    if ($readable == 'N') {
-        $objCode->setText('');
-    }
-    if ($showtype == 'N') {
-        $objCode->hideCodeType();
-    }
-
-    if ($color) {
-        if ($bgcolor) {
-            $objCode->setColors($color, $bgcolor);
-        } else {
-            $objCode->setColors($color);
-        }
-    }
-
-
-    $objCode->setType($type);
-    $objCode->setCode($code);
-
-    $objCode->showBarcodeImage();
 }
