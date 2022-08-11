@@ -282,7 +282,7 @@ class PiBarCode
                 $long = strlen($this->code);
                 $i = 0;
                 while (($carok) && ($i < $long)) {
-                    $tmp = ord($this->code{$i});
+                    $tmp = ord($this->code[$i]);
                     if (($tmp < 32) || ($tmp > 126)) {
                         $carok = false;
                     }
@@ -309,7 +309,7 @@ class PiBarCode
 
                 if (preg_match("/^\d{8}$/", $this->code) || preg_match("/^\d{13}$/", $this->code)) {
                     for ($index = ($long - 1); $index > 0; $index--) {
-                        $checksum += intval($this->code{$index - 1}) * $factor;
+                        $checksum += intval($this->code[$index - 1]) * $factor;
                         $factor = 4 - $factor;
                     }
                     $cc = ((1000 - $checksum) % 10);
@@ -322,7 +322,7 @@ class PiBarCode
                     }
                 } elseif (preg_match("/^\d{7}$/", $this->code) || preg_match("/^\d{12}$/", $this->code)) {
                     for ($index = $long; $index > 0; $index--) {
-                        $checksum += intval($this->code{$index - 1}) * $factor;
+                        $checksum += intval($this->code[$index - 1]) * $factor;
                         $factor = 4 - $factor;
                     }
                     $cc = ((1000 - $checksum) % 10);
@@ -348,7 +348,7 @@ class PiBarCode
                     $factor = 3;
                     $long = strlen($this->code);
                     for ($i = $long; $i > 0; $i--) {
-                        $checksum += intval($this->code{$i - 1}) * $factor;
+                        $checksum += intval($this->code[$i - 1]) * $factor;
                         $factor = 4 - $factor;
                     }
                     $checksum = 10 - ($checksum % 10);
@@ -389,7 +389,7 @@ class PiBarCode
                     $factor = 1;
                     $tmp = strlen($this->code);
                     for ($i = 0; $i < $tmp; $i++) {
-                        $checksum += intval($this->code{$i}) * $factor;
+                        $checksum += intval($this->code[$i]) * $factor;
                         $factor++;
                         if ($factor > 10) {
                             $factor = 1;
@@ -410,7 +410,7 @@ class PiBarCode
                     $factor = 1;
                     $tmp = strlen($this->code);
                     for ($i = $tmp; $i > 0; $i--) {
-                        $tmp = $this->code{$i - 1};
+                        $tmp = $this->code[$i - 1];
                         if ($tmp === "-") {
                             $tmp = 10;
                         } else {
@@ -443,7 +443,7 @@ class PiBarCode
                     $checksum = 0;
                     $tmp = strlen($this->code);
                     for ($i = $tmp; $i > 0; $i--) {
-                        $checksum += intval($this->code{$i - 1});
+                        $checksum += intval($this->code[$i - 1]);
                     }
                     $checksum = 10 - ($checksum % 10);
                     if ($checksum === 10) {
@@ -500,7 +500,7 @@ class PiBarCode
         // Copie de la chaine dans un tableau
         $a_tmp = array();
         for ($i = 0; $i < $lencode; $i++) {
-            $a_tmp[$i] = $this->fullCode{$i};
+            $a_tmp[$i] = $this->fullCode[$i];
         }
 
         switch ($this->type) {
@@ -719,7 +719,7 @@ class PiBarCode
             }
 
             // Gravure des barres
-            $fill_color = $encodedString{$i};
+            $fill_color = $encodedString[$i];
             switch ($this->type) {
                 case "POSTNET" :
                     if ($fill_color == "1") {
@@ -791,7 +791,7 @@ class PiBarCode
                 break;
             case "EAN" :
                 if ($text != '') {
-                    if ((strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0)) {
+                    if ((strlen($this->fullCode) > 10) && ($this->fullCode[0] > 0)) {
                         imagestring(
                             $this->ih,
                             3,
@@ -864,7 +864,7 @@ class PiBarCode
 
         // impression du type de code (si demandé)
         if ($this->showType == 'Y') {
-            if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0) && ($text != '')) {
+            if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode[0] > 0) && ($text != '')) {
                 imagestringup($this->ih, 1, 0, $this->height - 12, $this->type, $color[2]);
             } elseif ($this->type == "POSTNET") {
                 imagestringup($this->ih, 1, 0, $this->height - 2, "POST", $color[2]);
