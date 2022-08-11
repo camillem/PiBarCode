@@ -179,11 +179,6 @@ class PiBarCode
      */
     private $fileType = 'PNG';
 
-    /**
-     * @var string
-     */
-    private $encoded = '';
-
     private $ih = null;
 
     /**
@@ -667,8 +662,6 @@ class PiBarCode
         $nb_elem = strlen($encodedString);
         $this->codeWidth = max($this->codeWidth, $nb_elem);
         $this->width = max($this->width, $this->codeWidth + ($this->calmZone * 2));
-        $this->encoded = $encodedString;
-
 
         /**
          * Création de l'image du code
@@ -726,7 +719,7 @@ class PiBarCode
             }
 
             // Gravure des barres
-            $fill_color = $this->encoded{$i};
+            $fill_color = $encodedString{$i};
             switch ($this->type) {
                 case "POSTNET" :
                     if ($fill_color == "1") {
