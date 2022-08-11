@@ -6,18 +6,18 @@
 // *****              (c) 2002 - pitoo.com - mail@pitoo.com                *****
 // *****************************************************************************
 // *****************************************************************************
-// ***** Ce script est "FREEWARE",  il  peut  etre  librement copie et reutilise
-// ***** dans vos propres pages et applications.  Il peut egalement etre modifie
-// ***** ou ameliore.
-// ***** CEPENDANT :  par  respect  pour l'auteur,  avant d'utiliser,  recopier,
-// ***** modifier ce code vous vous engagez a :
-// ***** - conserver intact l'entete de ce fichier ( les commentaires comportant
-// *****   Le nom du script,  le copyright le nom de l'auteur et son e-mail,  ce
+// ***** Ce script est "FREEWARE", il peut être librement copié et réutilisé
+// ***** dans vos propres pages et applications. Il peut également être modifié
+// ***** ou amélioré.
+// ***** CEPENDANT :  par  respect pour l'auteur, avant d'utiliser,  recopier,
+// ***** modifier ce code vous vous engagez à :
+// ***** - conserver intact l'entête de ce fichier (les commentaires comportant
+// *****   Le nom du script, le copyright le nom de l'auteur et son e-mail,  ce
 // *****   texte et l'historique des mises a jour ).
-// ***** - conserver intact la  mention  'pitoo.com'  imprimee aleatoirement sur
-// *****   l'image du code genere dans environ 2% des cas.
-// ***** - envoyer un  e-mail  a l'auteur  mail(a)pitoo.com  lui indiquant votre
-// *****   intention d'utiliser le resultat de son travail.
+// ***** - conserver intact la mention 'pitoo.com'  imprimée aléatoirement sur
+// *****   l'image du code généré dans environ 2% des cas.
+// ***** - envoyer un  e-mail à l'auteur mail(a)pitoo.com lui indiquant votre
+// *****   intention d'utiliser le résultat de son travail.
 // *****************************************************************************
 // ***** Toute remarque, tout commentaire, tout rapport de bug, toute recompense
 // ***** sont la bienvenue : mail(a)pitoo.com
@@ -28,16 +28,16 @@
 // *****************************************************************************
 $last_version = "V2.13" ;
 // ***** V2.13 - 14/01/2016 - Aspic
-// *****       - Mise a jour : Ligne 335 : Compatibilit� avec les nouvelles versions de PHP
+// *****       - Mise a jour : Ligne 335 : Compatibilité avec les nouvelles versions de PHP
 // ***** V2.12 - 03/05/2013 - pitoo.com
-// *****       - Correction : Ligne 931 : Erreur de variable signal�e par Patrick D.
+// *****       - Correction : Ligne 931 : Erreur de variable signalée par Patrick D.
 // ***** V2.11 - 11/08/2010 - pitoo.com
-// *****       - Correction : Ligne 1003 : D�claration des variables pour �viter le "Warning" PHP
+// *****       - Correction : Ligne 1003 : Déclaration des variables pour éviter le "Warning" PHP
 // ***** V2.10 - 08/12/2009 - pitoo.com
-// *****       - Correction : Ligne 998 : Sur un serveur IIS 6, probl�me rencontr� avec la variable REQUEST_URI retourn�e vide.
-// ***** 	     Remplac�e par PHP_SELF, ca fonctionne. merci � Jean-Christophe BARON - www.cc-web.fr
+// *****       - Correction : Ligne 998 : Sur un serveur IIS 6, problème rencontré avec la variable REQUEST_URI retournée vide.
+// ***** 	     Remplacée par PHP_SELF, ca fonctionne. merci à Jean-Christophe BARON - www.cc-web.fr
 // ***** V2.9  - 25/09/2008 - pitoo.com
-// *****       - Corrections pour eviter l'affichage de messages "Notice" de PHP
+// *****       - Corrections pour éviter l'affichage de messages "Notice" de PHP
 // ***** V2.8  - 10/07/2008 - pitoo.com
 // *****       - Correction de bogue
 // ***** V2.7  - 10/07/2008 - pitoo.com
@@ -45,11 +45,11 @@ $last_version = "V2.13" ;
 // ***** V2.6  - 10/07/2008 - pitoo.com
 // *****       - Petites corrections de bugs d'affichage et de positionnement
 // ***** V2.5  - 08/07/2008 - pitoo.com
-// *****       - R��criture/Encapsulation de toutes les fonctions dans la Classe
+// *****       - Réécriture/Encapsulation de toutes les fonctions dans la Classe
 // *****       - Ajout d'une fonction permettant d'utiliser le script pour
 // *****         enregistrer l'image sur le disque au lieu de l'afficher
-// *****       - Ajout de la possibilit� de colorer le code
-// *****       - Ajout de la posibilit� de g�n�rer deux formats PNG ou GIF
+// *****       - Ajout de la possibilité de colorer le code
+// *****       - Ajout de la possibilité de générer deux formats PNG ou GIF
 // *****       - correction d'un bug dans le checksum (10='-') du C11
 // *****	   - corrections majeures de structures de code
 // ***** V2.05 - 13/06/2006 - pitoo.com
@@ -58,66 +58,66 @@ $last_version = "V2.13" ;
 // ***** V2.04 - 23/01/2006 - pitoo.com
 // *****       - Correction erreur codage Lettre A du code 39
 // ***** V2.03 - 20/11/2004 - pitoo.com
-// *****       - Supression de messages warning php
+// *****       - Suppression de messages warning php
 // ***** V2.02 - 07/04/2004 - pitoo.com
 // *****       - Suppression du checksum et des Start/Stop sur le code KIX
 // ***** V2.01 - 18/12/2003 - pitoo.com
 // *****       - Correction de bug pour checksum C128 = 100 / 101 / 102
 // ***** V2.00 - 19/06/2003 - pitoo.com
-// *****       - R��criture de toutes les fonctions pour g�n�ration directe de
-// *****         l'image du code barre en PNG plut�t que d'utiliser une
+// *****       - Réécriture de toutes les fonctions pour génération directe de
+// *****         l'image du code barre en PNG plutôt que d'utiliser une
 // *****         multitude de petits fichiers GIFs
 // ***** V1.32 - 21/12/2002 - pitoo.com
-// *****       - Ecriture du code 39
+// *****       - Écriture du code 39
 // *****       - Amelioration des codes UPC et 25 ()
 // ***** V1.31 - 17/12/2002 - pitoo.com
-// *****       - Amelioration du code 128 (ajout du Set de caracteres C)
+// *****       - Amelioration du code 128 (ajout du Set de characters C)
 // *****       - Amelioration du code 128 (ajout du code lisible en dessous )
 // ***** V1.3  - 12/12/2002 - pitoo.com
-// *****       - Ecriture du code 128 B
+// *****       - Écriture du code 128 B
 // ***** V1.2  - 01/08/2002 - pitoo.com
-// *****       - Ecriture du code UPC / EAN
+// *****       - Écriture du code UPC / EAN
 // ***** V1.0  - 01/01/2002 - pitoo.com
-// *****       - Ecriture du code 25
+// *****       - Écriture du code 25
 
 
 
 // *****************************************************************************
 // *****                        CLASSE pi_barcode                          *****
 // *****************************************************************************
-// ***** pi_barcode()               : Constructeur et r�-initialisation
+// ***** pi_barcode()               : Constructeur et ré-initialisation
 // *****
 // *****************************************************************************
-// ***** M�thodes Publiques :
+// ***** Méthodes Publiques :
 // *****************************************************************************
 // ***** setSize($h, $w=0, $cz=0)   : Hauteur mini=15px
 // *****                            : Largeur
 // *****                            : Zones Calmes mini=10px
 // ***** setText($text='AUTO')      : Texte sous les barres (ou AUTO ou '')
-// ***** hideCodeType()             : D�sactive l'impression du Type de code
+// ***** hideCodeType()             : Désactive l'impression du Type de code
 // ***** setColors($fg, $bg=0)      : Couleur des Barres et du Fond
 // *****
-// ***** setCode($code)*            : Enregistre le code a g�n�rer
+// ***** setCode($code)*            : Enregistre le code a générer
 // ***** setType($type)*            : EAN, UPC, C39...
 // *****
-// ***** utiliser l'une ou l'autre de ces deux m�thodes :
-// ***** showBarcodeImage()**       : Envoie l'image PNG du code � l'affichage
-// ***** writeBarcodeFile($file)**  : cr�e un fichier image du Code � Barres
+// ***** utiliser l'une ou l'autre de ces deux méthodes :
+// ***** showBarcodeImage()**       : Envoie l'image PNG du code à l'affichage
+// ***** writeBarcodeFile($file)**  : crée un fichier image du Code à Barres
 // *****
 // ***** * = appel requis
 // ***** ** = appel requis pour l'un ou l'autre ou les 2
 // *****
 // *****************************************************************************
-// ***** M�thodes Priv�es :
+// ***** Méthodes Privées :
 // *****************************************************************************
-// ***** checkCode()                : V�rifie le CODE et positionne FULLCODE
+// ***** checkCode()                : Vérifie le CODE et positionne FULLCODE
 // ***** encode()                   : Converti FULLCODE en barres
 // *****
 if ( !class_exists( "PiBarCode" ) ) {
 	class PiBarCode
 	{
 		/**
-		* ***** D�finition des variables *****
+		* ***** Définition des variables *****
 		*/
 
 		var $CODE;
@@ -136,7 +136,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 		var $IH = NULL;
 
 		/**
-		* D�finition des symbologies
+		* Définition des symbologies
 		*/
 		var $C128 = array(
 					0 => "11011001100",     1 => "11001101100",     2 => "11001100110",
@@ -175,7 +175,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 					99  => "10111011110",    // 99 et 'c' sont identiques ne nous sert que pour le checksum
 					100 => "10111101110",    // 100 et 'b' sont identiques ne nous sert que pour le checksum
 					101 => "11101011110",    // 101 et 'a' sont identiques ne nous sert que pour le checksum
-					102 => "11110101110",    // 102 correspond � FNC1 ne nous sert que pour le checksum
+					102 => "11110101110",    // 102 correspond à FNC1 ne nous sert que pour le checksum
 					'c' => "10111011110",   'b' => "10111101110",   'a' => "11101011110",
 					'A' => "11010000100",   'B' => "11010010000",   'C' => "11010011100",
 					'S' => "1100011101011"
@@ -188,7 +188,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 					6 => "13311",           7 => "11133",
 					8 => "31131",           9 => "13131",
 					'D' => "111011101",       'F' => "111010111", // Code 2 parmi 5
-					'd' => "1010",          'f' => "11101"   // Code 2/5 entrelac�
+					'd' => "1010",          'f' => "11101"   // Code 2/5 entrelacé
 				);
 
 		var $C39 =  array(
@@ -332,7 +332,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 				);
 
 		/**
-		* Constructeur // est appel� automatiquement � l'instanciation de l'objet
+		* Constructeur // est appelé automatiquement à l'instanciation de l'objet
 		*/
 		function __construct()
 		{
@@ -348,7 +348,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 			$this->BACKGROUND = hexdec('#FFFFFF');
 			$this->FILETYPE = 'PNG';
 			$this->ENCODED = '';
-			// detruire eventuellement l'image existante
+			// détruire éventuellement l'image existante
 			if ($this->IH) imagedestroy($this->IH);
 			$this->IH = NULL;
 		}
@@ -408,9 +408,9 @@ if ( !class_exists( "PiBarCode" ) ) {
 		}
 
 		/**
-		* V�rification du Code
+		* Vérification du Code
 		*
-		* calcul ou v�rification du Checksum
+		* calcul ou vérification du Checksum
 		*/
 		function checkCode()
 		{
@@ -619,16 +619,6 @@ if ( !class_exists( "PiBarCode" ) ) {
 
 					if (preg_match("/^[A-Z0-9]{1,50}$/", $this->CODE))
 					{
-/* ***** LE CODE KIX n'a pas de checksum (correction V2.02)
-						$checksum = 0;
-						$tmp = strlen("$this->CODE");
-						for($i=$tmp-1; $i>=0; $i--) {
-							$checksum += intval(substr($this->CODE,$i,1));
-						}
-						$checksum = 10-($checksum%10);
-						if($checksum==10) $checksum=0;
-						$this->CODE .= "$checksum";
-*/
 						$this->FULLCODE = $this->CODE;
 					}
 					else
@@ -678,20 +668,20 @@ if ( !class_exists( "PiBarCode" ) ) {
 				case "UPC" :
 					if ($lencode == 8)
 					{
-						$encodedString = '101'; //Premier s�parateur (101)
+						$encodedString = '101'; //Premier séparateur (101)
 						for ($i = 0; $i < 4; $i++) $encodedString .= $this->EANbars['A'][$a_tmp[$i]]; //Codage partie gauche (tous de classe A)
-						$encodedString .= '01010'; //S�parateur central (01010) //Codage partie droite (tous de classe C)
+						$encodedString .= '01010'; //Séparateur central (01010) //Codage partie droite (tous de classe C)
 						for ($i = 4; $i < 8; $i++) $encodedString .= $this->EANbars['C'][$a_tmp[$i]];
-						$encodedString .= '101'; //Dernier s�parateur (101)
+						$encodedString .= '101'; //Dernier séparateur (101)
 					}
 					else
 					{
-						$parity = $this->EANparity[$a_tmp[0]]; //On r�cup�re la classe de codage de la partie qauche
-						$encodedString = '101'; //Premier s�parateur (101)
+						$parity = $this->EANparity[$a_tmp[0]]; //On récupère la classe de codage de la partie gauche
+						$encodedString = '101'; //Premier séparateur (101)
 						for ($i = 1; $i < 7; $i++) $encodedString .= $this->EANbars[$parity[$i-1]][$a_tmp[$i]]; //Codage partie gauche
-						$encodedString .= '01010'; //S�parateur central (01010) //Codage partie droite (tous de classe C)
+						$encodedString .= '01010'; //Séparateur central (01010) //Codage partie droite (tous de classe C)
 						for ($i = 7; $i < 13; $i++) $encodedString .= $this->EANbars['C'][$a_tmp[$i]];
-						$encodedString .= '101'; //Dernier s�parateur (101)
+						$encodedString .= '101'; //Dernier séparateur (101)
 					}
 
 				  break;
@@ -786,9 +776,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 					else $this->HEIGHT = 22;
 				  break;
 				case "KIX" :
-//	                $encodedString = "31"; //Start
 					for ($i = 0; $i < $lencode; $i++) $encodedString .= $this->kix[$a_tmp[$i]];
-//	                $encodedString .= "32"; //Stop
 
 					$this->CODEWIDTH = ( strlen($encodedString) * 4 ) - 4;
 					if( $this->HR != '' ) $this->HEIGHT = 32;
@@ -816,7 +804,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 
 
 			/**
-			* Cr�ation de l'image du code
+			* Création de l'image du code
 			*/
 
 			//Initialisation de l'image
@@ -824,7 +812,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 			$posY = 0; // position Y
 			$intL = 1; // largeur de la barre
 
-			// detruire eventuellement l'image existante
+			// détruire éventuellement l'image existante
 			if ($this->IH) imagedestroy($this->IH);
 
 			$this->IH = imagecreate($this->WIDTH, $this->HEIGHT);
@@ -894,7 +882,7 @@ if ( !class_exists( "PiBarCode" ) ) {
 					if($fill_color == "1") imagefilledrectangle($this->IH, $posX, $posY, $posX, ($posY+$intH), $color[1]);
 				}
 
-				//Deplacement du pointeur
+				//Déplacement du pointeur
 				$posX += $intL;
 			}
 
@@ -934,11 +922,11 @@ if ( !class_exists( "PiBarCode" ) ) {
 
 			}
 
-			// de temps a autres, ajouter pitoo.com *** Merci de ne pas supprimer cette fonction ***
+			// de temps à autre, ajouter pitoo.com *** Merci de ne pas supprimer cette fonction ***
 			$ifw = imagefontwidth(1) * 9;
 			if ((rand(0,50)<1) AND ($this->HEIGHT >= $ifw)) imagestringup($this->IH, 1, $nb_elem + 12, $this->HEIGHT - 2, "Pitoo.com", $color[2]);
 
-			// impression du type de code (si demand�)
+			// impression du type de code (si demandé)
 			if ($this->SHOWTYPE == 'Y')
 			{
 				if (($this->TYPE == "EAN") AND (strlen($this->FULLCODE) > 10) AND ($this->FULLCODE{0} > 0) AND ($text != ''))
@@ -996,14 +984,13 @@ if ( !class_exists( "PiBarCode" ) ) {
 		}
 
 	}
-	//Fin de la classe
 }
 
 
 /**
-* Compatibilit� avec les versions precedentes
+* Compatibilité avec les versions précédentes
 *
-* si appel direct de la biblioth�que, g�n�rer l'image a la vol�e
+* si appel direct de la bibliothèque, générer l'image à la volée
 */
 if (strpos($_SERVER['PHP_SELF'], 'pi_barcode.php'))
 {
@@ -1017,7 +1004,7 @@ if (strpos($_SERVER['PHP_SELF'], 'pi_barcode.php'))
 
 	extract($_GET);
 
-	// ***** Cr�ation de l'objet
+	// ***** Création de l'objet
 	$objCode = new PiBarCode();
 
 	$type = strtoupper($type);
