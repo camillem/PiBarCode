@@ -81,7 +81,6 @@
 // *****       - Écriture du code 25
 
 
-
 // *****************************************************************************
 // *****                        CLASSE pi_barcode                          *****
 // *****************************************************************************
@@ -188,8 +187,8 @@ class PiBarCode
     private $ih = null;
 
     /**
-    * Constructeur
-    */
+     * Constructeur
+     */
     function __construct()
     {
         $this->foreground = hexdec(self::BLACK);
@@ -197,303 +196,302 @@ class PiBarCode
     }
 
     /**
-    * Set Barcode Type
-    */
+     * Set Barcode Type
+     */
     function setType($type)
     {
         $this->type = $type;
     }
+
     /**
-    * Set Barcode String
-    */
+     * Set Barcode String
+     */
     function setCode($code)
     {
         $this->code = $code;
     }
+
     /**
-    * Set Image Height and Extra-Width
-    */
-    function setSize($height, $width=0, $calmZone=0)
+     * Set Image Height and Extra-Width
+     */
+    function setSize($height, $width = 0, $calmZone = 0)
     {
-        $this->height = ($height > 15 ? $height : 15);
-        $this->width = ($width > 0 ? $width : 0);
-        $this->calmZone = ($calmZone > 10 ? $calmZone : 10);
+        $this->height = (max($height, 15));
+        $this->width = (max($width, 0));
+        $this->calmZone = (max($calmZone, 10));
     }
+
     /**
-    * Set the Printed Text under Bars
-    */
-    function setText($text='AUTO')
+     * Set the Printed Text under Bars
+     */
+    function setText($text = 'AUTO')
     {
         $this->hr = $text;
     }
+
     /**
-    * Disable CodeType printing
-    */
+     * Disable CodeType printing
+     */
     function hideCodeType()
     {
         $this->showType = 'N';
     }
+
     /**
-    * Set Colors
-    */
-    function setColors($fg, $bg='#FFFFFF')
+     * Set Colors
+     */
+    function setColors($fg, $bg = '#FFFFFF')
     {
         $this->foreground = hexdec($fg);
         $this->background = hexdec($bg);
     }
+
     /**
-    * Set File Type (PNG, GIF or JPG)
-    */
-    function setFileType($ft='PNG')
+     * Set File Type (PNG, GIF or JPG)
+     */
+    function setFileType($ft = 'PNG')
     {
         $ft = strtoupper($ft);
         $this->fileType = ($ft == 'GIF' ? 'GIF' : ($ft == 'JPG' ? 'JPG' : 'PNG'));
     }
 
     /**
-    * Vérification du Code
-    *
-    * calcul ou vérification du Checksum
-    */
+     * Vérification du Code
+     *
+     * calcul ou vérification du Checksum
+     */
     function checkCode()
     {
-        switch( $this->type ) {
+        switch ($this->type) {
             case "C128C" :
 
-                if (preg_match("/^[0-9]{2,48}$/", $this->code))
-                {
+                if (preg_match("/^[0-9]{2,48}$/", $this->code)) {
                     $tmp = strlen($this->code);
-                    if (($tmp%2)!=0) $this->fullCode = '0'.$this->code;
-                    else             $this->fullCode = $this->code;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "CODE 128C REQUIRES DIGITS ONLY";
-                  break;
+                    if (($tmp % 2) != 0) {
+                        $this->fullCode = '0' . $this->code;
+                    } else {
+                        $this->fullCode = $this->code;
+                    }
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "CODE 128C REQUIRES DIGITS ONLY";
+                    break;
                 }
 
             case "C128" :
 
                 $carok = true;
-                $long = strlen( $this->code );
+                $long = strlen($this->code);
                 $i = 0;
-                while (($carok) && ($i<$long))
-                {
-                    $tmp = ord( $this->code{$i} ) ;
-                    if (($tmp < 32) || ($tmp > 126)) $carok = false;
+                while (($carok) && ($i < $long)) {
+                    $tmp = ord($this->code{$i});
+                    if (($tmp < 32) || ($tmp > 126)) {
+                        $carok = false;
+                    }
                     $i++;
                 }
-                if ($carok) $this->fullCode = $this->code;
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "UNAUTHORIZED CHARS IN 128 CODE";
+                if ($carok) {
+                    $this->fullCode = $this->code;
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "UNAUTHORIZED CHARS IN 128 CODE";
                 }
 
-              break;
+                break;
             case "UPC" :
 
-                $this->code = '0'.$this->code;
+                $this->code = '0' . $this->code;
                 $this->type = 'EAN';
 
             case "EAN" :
 
-                $long = strlen( $this->code ) ;
+                $long = strlen($this->code);
                 $factor = 3;
                 $checksum = 0;
 
-                if (preg_match("/^[0-9]{8}$/", $this->code) || preg_match("/^[0-9]{13}$/", $this->code))
-                {
-
-                    for ($index = ($long - 1); $index > 0; $index--)
-                    {
-                        $checksum += intval($this->code{$index-1}) * $factor ;
-                        $factor = 4 - $factor ;
+                if (preg_match("/^[0-9]{8}$/", $this->code) || preg_match("/^[0-9]{13}$/", $this->code)) {
+                    for ($index = ($long - 1); $index > 0; $index--) {
+                        $checksum += intval($this->code{$index - 1}) * $factor;
+                        $factor = 4 - $factor;
                     }
-                    $cc = ( (1000 - $checksum) % 10 ) ;
+                    $cc = ((1000 - $checksum) % 10);
 
-                    if ( substr( $this->code, -1, 1) != $cc )
-                    {
+                    if (substr($this->code, -1, 1) != $cc) {
                         $this->type = "ERR";
                         $this->fullCode = "CHECKSUM ERROR IN EAN/UPC CODE";
+                    } else {
+                        $this->fullCode = $this->code;
                     }
-                    else $this->fullCode = $this->code;
-
-                }
-                elseif (preg_match("/^[0-9]{7}$/", $this->code) || preg_match("/^[0-9]{12}$/", $this->code))
-                {
-
+                } elseif (preg_match("/^[0-9]{7}$/", $this->code) || preg_match("/^[0-9]{12}$/", $this->code)) {
                     for ($index = $long; $index > 0; $index--) {
-                        $checksum += intval($this->code{$index-1}) * $factor ;
-                        $factor = 4 - $factor ;
+                        $checksum += intval($this->code{$index - 1}) * $factor;
+                        $factor = 4 - $factor;
                     }
-                    $cc = ( ( 1000 - $checksum ) % 10 ) ;
+                    $cc = ((1000 - $checksum) % 10);
 
-                    $this->fullCode = $this->code.$cc ;
-
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "THIS CODE IS NOT EAN/UPC TYPE";
+                    $this->fullCode = $this->code . $cc;
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "THIS CODE IS NOT EAN/UPC TYPE";
                 }
 
-              break;
+                break;
             case "C25I" :
 
                 $long = strlen($this->code);
-                if(($long%2)==0) $this->code = '0'.$this->code;
+                if (($long % 2) == 0) {
+                    $this->code = '0' . $this->code;
+                }
 
             case "C25" :
 
-                if (preg_match("/^[0-9]{1,48}$/", $this->code))
-                {
+                if (preg_match("/^[0-9]{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 3;
                     $long = strlen($this->code);
                     for ($i = $long; $i > 0; $i--) {
-                        $checksum += intval($this->code{$i-1}) * $factor;
-                        $factor = 4-$factor;
+                        $checksum += intval($this->code{$i - 1}) * $factor;
+                        $factor = 4 - $factor;
                     }
                     $checksum = 10 - ($checksum % 10);
-                    if ($checksum == 10) $checksum = 0;
-                    $this->fullCode = $this->code.$checksum;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "CODE C25 REQUIRES DIGITS ONLY";
+                    if ($checksum == 10) {
+                        $checksum = 0;
+                    }
+                    $this->fullCode = $this->code . $checksum;
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "CODE C25 REQUIRES DIGITS ONLY";
                 }
 
-              break;
+                break;
             case "C39" :
 
-                if (preg_match("/^[0-9A-Z\-\.\$\/+% ]{1,48}$/i", $this->code))
-                {
-                  $this->fullCode = '*'.$this->code.'*';
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "UNAUTHORIZED CHARS IN CODE 39";
+                if (preg_match("/^[0-9A-Z\-\.\$\/+% ]{1,48}$/i", $this->code)) {
+                    $this->fullCode = '*' . $this->code . '*';
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "UNAUTHORIZED CHARS IN CODE 39";
                 }
 
-              break;
+                break;
             case "CODABAR" :
 
-                if (!preg_match("/^(A|B|C|D)[0-9\-\$:\/\.\+]{1,48}(A|B|C|D)$/i", $this->code))
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "CODABAR START/STOP : ABCD";
+                if (!preg_match("/^(A|B|C|D)[0-9\-\$:\/\.\+]{1,48}(A|B|C|D)$/i", $this->code)) {
+                    $this->type = "ERR";
+                    $this->fullCode = "CODABAR START/STOP : ABCD";
+                } else {
+                    $this->fullCode = $this->code;
                 }
-                else $this->fullCode = $this->code;
 
-              break;
+                break;
             case "MSI" :
 
-                if (preg_match("/^[0-9]{1,48}$/", $this->code))
-                {
+                if (preg_match("/^[0-9]{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 1;
                     $tmp = strlen($this->code);
                     for ($i = 0; $i < $tmp; $i++) {
                         $checksum += intval($this->code{$i}) * $factor;
                         $factor++;
-                        if ($factor > 10) $factor = 1;
+                        if ($factor > 10) {
+                            $factor = 1;
+                        }
                     }
                     $checksum = (1000 - $checksum) % 10;
-                    $this->fullCode = $this->code.$checksum;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "CODE MSI REQUIRES DIGITS ONLY";
+                    $this->fullCode = $this->code . $checksum;
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "CODE MSI REQUIRES DIGITS ONLY";
                 }
 
-              break;
+                break;
             case "C11" :
 
-                if (preg_match("/^[0-9\-]{1,48}$/", $this->code))
-                {
+                if (preg_match("/^[0-9\-]{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 1;
                     $tmp = strlen($this->code);
                     for ($i = $tmp; $i > 0; $i--) {
-                        $tmp = $this->code{$i-1};
-                        if ($tmp == "-") $tmp = 10;
-                        else $tmp = intval($tmp);
+                        $tmp = $this->code{$i - 1};
+                        if ($tmp === "-") {
+                            $tmp = 10;
+                        } else {
+                            $tmp = intval($tmp);
+                        }
                         $checksum += ($tmp * $factor);
                         $factor++;
-                        if ($factor > 10) $factor=1;
+                        if ($factor > 10) {
+                            $factor = 1;
+                        }
                     }
                     $checksum = $checksum % 11;
-                    if ($checksum == 10) $this->fullCode = $this->code . "-";
-                    else $this->fullCode .= $this->code.$checksum;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "UNAUTHORIZED CHARS IN CODE 11";
+                    if ($checksum == 10) {
+                        $this->fullCode = $this->code . "-";
+                    } else {
+                        $this->fullCode .= $this->code . $checksum;
+                    }
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "UNAUTHORIZED CHARS IN CODE 11";
                 }
 
-              break;
+                break;
             case "POSTNET" :
 
-                if (preg_match("/^[0-9]{5}$/", $this->code) || preg_match("/^[0-9]{9}$/", $this->code) || preg_match("/^[0-9]{11}$/", $this->code))
-                {
+                if (preg_match("/^[0-9]{5}$/", $this->code) || preg_match("/^[0-9]{9}$/", $this->code) || preg_match(
+                        "/^[0-9]{11}$/",
+                        $this->code
+                    )) {
                     $checksum = 0;
                     $tmp = strlen($this->code);
                     for ($i = $tmp; $i > 0; $i--) {
-                        $checksum += intval($this->code{$i-1});
+                        $checksum += intval($this->code{$i - 1});
                     }
                     $checksum = 10 - ($checksum % 10);
-                    if($checksum == 10) $checksum = 0;
-                    $this->fullCode = $this->code.$checksum;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "POSTNET MUST BE 5/9/11 DIGITS";
+                    if ($checksum === 10) {
+                        $checksum = 0;
+                    }
+                    $this->fullCode = $this->code . $checksum;
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "POSTNET MUST BE 5/9/11 DIGITS";
                 }
 
-              break;
+                break;
             case "KIX" :
 
-                if (preg_match("/^[A-Z0-9]{1,50}$/", $this->code))
-                {
+                if (preg_match("/^[A-Z0-9]{1,50}$/", $this->code)) {
                     $this->fullCode = $this->code;
-                }
-                else
-                {
-                  $this->type = "ERR";
-                  $this->fullCode = "UNAUTHORIZED CHARS IN KIX CODE";
+                } else {
+                    $this->type = "ERR";
+                    $this->fullCode = "UNAUTHORIZED CHARS IN KIX CODE";
                 }
 
-              break;
+                break;
             case "CMC7" :
 
-                if(!preg_match("/^[0-9A-E]{1,48}$/", $this->code)) {
-                  $this->type = "ERR";
-                  $this->fullCode = "CMC7 MUST BE NUMERIC or ABCDE";
+                if (!preg_match("/^[0-9A-E]{1,48}$/", $this->code)) {
+                    $this->type = "ERR";
+                    $this->fullCode = "CMC7 MUST BE NUMERIC or ABCDE";
+                } else {
+                    $this->fullCode = $this->code;
                 }
-                else $this->fullCode = $this->code;
 
-              break;
+                break;
             default :
 
                 $this->type = "ERR";
                 $this->fullCode = "UNKWOWN BARCODE TYPE";
 
-              break;
+                break;
         }
     }
 
     /**
-    * Encodage
-    *
-    * Encode des symboles (a-Z, 0-9, ...) vers des barres
-    */
+     * Encodage
+     *
+     * Encode des symboles (a-Z, 0-9, ...) vers des barres
+     */
     function encode()
     {
         settype($this->fullCode, 'string');
@@ -503,226 +501,271 @@ class PiBarCode
 
         // Copie de la chaine dans un tableau
         $a_tmp = array();
-        for($i = 0; $i < $lencode ; $i++) $a_tmp[$i] = $this->fullCode{$i};
+        for ($i = 0; $i < $lencode; $i++) {
+            $a_tmp[$i] = $this->fullCode{$i};
+        }
 
-        switch( $this->type ) {
-
+        switch ($this->type) {
             case "EAN" :
             case "UPC" :
-                if ($lencode == 8)
-                {
+                if ($lencode == 8) {
                     $encodedString = '101'; //Premier séparateur (101)
-                    for ($i = 0; $i < 4; $i++) $encodedString .= PiBarCodeType::EAN_BARS['A'][$a_tmp[$i]]; //Codage partie gauche (tous de classe A)
+                    for ($i = 0; $i < 4; $i++) {
+                        $encodedString .= PiBarCodeType::EAN_BARS['A'][$a_tmp[$i]];
+                    } //Codage partie gauche (tous de classe A)
                     $encodedString .= '01010'; //Séparateur central (01010) //Codage partie droite (tous de classe C)
-                    for ($i = 4; $i < 8; $i++) $encodedString .= PiBarCodeType::EAN_BARS['C'][$a_tmp[$i]];
+                    for ($i = 4; $i < 8; $i++) {
+                        $encodedString .= PiBarCodeType::EAN_BARS['C'][$a_tmp[$i]];
+                    }
                     $encodedString .= '101'; //Dernier séparateur (101)
-                }
-                else
-                {
+                } else {
                     $parity = PiBarCodeType::EAN_PARITY[$a_tmp[0]]; //On récupère la classe de codage de la partie gauche
                     $encodedString = '101'; //Premier séparateur (101)
-                    for ($i = 1; $i < 7; $i++) $encodedString .= PiBarCodeType::EAN_BARS[$parity[$i-1]][$a_tmp[$i]]; //Codage partie gauche
+                    for ($i = 1; $i < 7; $i++) {
+                        $encodedString .= PiBarCodeType::EAN_BARS[$parity[$i - 1]][$a_tmp[$i]];
+                    } //Codage partie gauche
                     $encodedString .= '01010'; //Séparateur central (01010) //Codage partie droite (tous de classe C)
-                    for ($i = 7; $i < 13; $i++) $encodedString .= PiBarCodeType::EAN_BARS['C'][$a_tmp[$i]];
+                    for ($i = 7; $i < 13; $i++) {
+                        $encodedString .= PiBarCodeType::EAN_BARS['C'][$a_tmp[$i]];
+                    }
                     $encodedString .= '101'; //Dernier séparateur (101)
                 }
 
-              break;
+                break;
             case "C128C" :
                 $encodedString = PiBarCodeType::C128['C']; //Start
-                $checksum = 105 ;
-                $j = 1 ;
-                for ($i = 0; $i < $lencode; $i += 2)
-                {
-                    $tmp = intval(substr($this->fullCode, $i, 2)) ;
-                    $checksum += ( $j++ * $tmp ) ;
+                $checksum = 105;
+                $j = 1;
+                for ($i = 0; $i < $lencode; $i += 2) {
+                    $tmp = intval(substr($this->fullCode, $i, 2));
+                    $checksum += ($j++ * $tmp);
                     $encodedString .= PiBarCodeType::C128[$tmp];
                 }
-                $checksum %= 103 ;
+                $checksum %= 103;
                 $encodedString .= PiBarCodeType::C128[$checksum];
                 $encodedString .= PiBarCodeType::C128['S']; //Stop
-              break;
+                break;
             case "C128" :
                 $encodedString = PiBarCodeType::C128['B']; //Start
-                $checksum = 104 ;
-                $j = 1 ;
-                for ($i = 0; $i < $lencode; $i++)
-                {
-                    $tmp = ord($a_tmp[$i]) - 32 ;
-                    $checksum += ( $j++ * $tmp ) ;
+                $checksum = 104;
+                $j = 1;
+                for ($i = 0; $i < $lencode; $i++) {
+                    $tmp = ord($a_tmp[$i]) - 32;
+                    $checksum += ($j++ * $tmp);
                     $encodedString .= PiBarCodeType::C128[$tmp];
                 }
-                $checksum %= 103 ;
+                $checksum %= 103;
                 $encodedString .= PiBarCodeType::C128[$checksum];
                 $encodedString .= PiBarCodeType::C128['S']; //Stop
-              break;
+                break;
             case "C25" :
-                $encodedString = PiBarCodeType::C25['D']."0"; //Start
-                for ($i = 0; $i < $lencode; $i++)
-                {
-                    $num = intval($a_tmp[$i]) ;
+                $encodedString = PiBarCodeType::C25['D'] . "0"; //Start
+                for ($i = 0; $i < $lencode; $i++) {
+                    $num = intval($a_tmp[$i]);
                     $tmp = PiBarCodeType::C25[$num];
-                    for ($j = 0; $j < 5; $j++)
-                    {
-                        $tmp2 = intval(substr($tmp,$j,1)) ;
-                        for ($k = 1; $k <= $tmp2; $k++) $encodedString .= "1";
+                    for ($j = 0; $j < 5; $j++) {
+                        $tmp2 = intval(substr($tmp, $j, 1));
+                        for ($k = 1; $k <= $tmp2; $k++) {
+                            $encodedString .= "1";
+                        }
                         $encodedString .= "0";
                     }
                 }
                 $encodedString .= PiBarCodeType::C25['F']; //Stop
-              break;
+                break;
             case "C25I" :
                 $encodedString = PiBarCodeType::C25['d']; //Start
                 $checksum = 0;
-                for ($i = 0; $i < $lencode; $i += 2)
-                {
-                    $num1 = intval($a_tmp[$i]) ;
-                    $num2 = intval($a_tmp[$i+1]) ;
-                    $checksum += ($num1+$num2);
+                for ($i = 0; $i < $lencode; $i += 2) {
+                    $num1 = intval($a_tmp[$i]);
+                    $num2 = intval($a_tmp[$i + 1]);
+                    $checksum += ($num1 + $num2);
                     $tmp1 = PiBarCodeType::C25[$num1];
                     $tmp2 = PiBarCodeType::C25[$num2];
-                    for ($j = 0; $j < 5; $j++)
-                    {
-                        $t1 = intval(substr($tmp1, $j, 1)) ;
-                        $t2 = intval(substr($tmp2, $j, 1)) ;
-                        for ($k = 1; $k <= $t1; $k++) $encodedString .= "1";
-                        for ($k = 1; $k <= $t2; $k++) $encodedString .= "0";
+                    for ($j = 0; $j < 5; $j++) {
+                        $t1 = intval(substr($tmp1, $j, 1));
+                        $t2 = intval(substr($tmp2, $j, 1));
+                        for ($k = 1; $k <= $t1; $k++) {
+                            $encodedString .= "1";
+                        }
+                        for ($k = 1; $k <= $t2; $k++) {
+                            $encodedString .= "0";
+                        }
                     }
                 }
                 $encodedString .= PiBarCodeType::C25['f']; //Stop
-              break;
+                break;
             case "C39" :
-                for ($i = 0; $i < $lencode; $i++)$encodedString .= PiBarCodeType::C39[$a_tmp[$i]] . "0";
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::C39[$a_tmp[$i]] . "0";
+                }
                 $encodedString = substr($encodedString, 0, -1);
-              break;
+                break;
             case "CODABAR" :
-                for ($i = 0; $i < $lencode; $i++) $encodedString .= PiBarCodeType::CODE_A_BAR[$a_tmp[$i]] . "0";
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::CODE_A_BAR[$a_tmp[$i]] . "0";
+                }
                 $encodedString = substr($encodedString, 0, -1);
-              break;
+                break;
             case "MSI" :
                 $encodedString = PiBarCodeType::MSI['D']; //Start
-                for ($i = 0; $i < $lencode; $i++) $encodedString .= PiBarCodeType::MSI[intval($a_tmp[$i])];
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::MSI[intval($a_tmp[$i])];
+                }
                 $encodedString .= PiBarCodeType::MSI['F']; //Stop
-              break;
+                break;
             case "C11" :
-                $encodedString = PiBarCodeType::C11['S']."0"; //Start
-                for ($i = 0; $i < $lencode; $i++) $encodedString .= PiBarCodeType::C11[$a_tmp[$i]]."0";
+                $encodedString = PiBarCodeType::C11['S'] . "0"; //Start
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::C11[$a_tmp[$i]] . "0";
+                }
                 $encodedString .= PiBarCodeType::C11['S']; //Stop
-              break;
+                break;
             case "POSTNET" :
                 $encodedString = '1'; //Start
-                for ($i = 0; $i < $lencode; $i++) $encodedString .= PiBarCodeType::POSTNET[$a_tmp[$i]];
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::POSTNET[$a_tmp[$i]];
+                }
                 $encodedString .= '1'; //Stop
 
-                $this->codeWidth = ( strlen($encodedString) * 4 ) - 4;
-                if( $this->hr != '' ) $this->height = 32;
-                else $this->height = 22;
-              break;
+                $this->codeWidth = (strlen($encodedString) * 4) - 4;
+                if ($this->hr != '') {
+                    $this->height = 32;
+                } else {
+                    $this->height = 22;
+                }
+                break;
             case "KIX" :
-                for ($i = 0; $i < $lencode; $i++) $encodedString .= PiBarCodeType::KIX[$a_tmp[$i]];
+                for ($i = 0; $i < $lencode; $i++) {
+                    $encodedString .= PiBarCodeType::KIX[$a_tmp[$i]];
+                }
 
-                $this->codeWidth = ( strlen($encodedString) * 4 ) - 4;
-                if( $this->hr != '' ) $this->height = 32;
-                else $this->height = 22;
-              break;
+                $this->codeWidth = (strlen($encodedString) * 4) - 4;
+                if ($this->hr != '') {
+                    $this->height = 32;
+                } else {
+                    $this->height = 22;
+                }
+                break;
             case "CMC7" :
                 $encodedString = $this->fullCode;
 
-                $this->codeWidth = ( $lencode * 24 ) - 8;
+                $this->codeWidth = ($lencode * 24) - 8;
                 $this->height = 35;
-              break;
+                break;
             case "ERR" :
                 $encodedString = '';
 
                 $this->codeWidth = (imagefontwidth(2) * $lencode);
-                $this->height = max( $this->height, 36 );
-              break;
-
+                $this->height = max($this->height, 36);
+                break;
         }
 
         $nb_elem = strlen($encodedString);
-        $this->codeWidth = max( $this->codeWidth, $nb_elem );
-        $this->width = max( $this->width, $this->codeWidth + ($this->calmZone*2) );
+        $this->codeWidth = max($this->codeWidth, $nb_elem);
+        $this->width = max($this->width, $this->codeWidth + ($this->calmZone * 2));
         $this->encoded = $encodedString;
 
 
         /**
-        * Création de l'image du code
-        */
+         * Création de l'image du code
+         */
 
         //Initialisation de l'image
-        $txtPosX = $posX = intval(($this->width - $this->codeWidth)/2); // position X
+        $txtPosX = $posX = intval(($this->width - $this->codeWidth) / 2); // position X
         $posY = 0; // position Y
         $intL = 1; // largeur de la barre
 
         // détruire éventuellement l'image existante
-        if ($this->ih) imagedestroy($this->ih);
+        if ($this->ih) {
+            imagedestroy($this->ih);
+        }
 
         $this->ih = imagecreate($this->width, $this->height);
 
         // colors
-        $color[0] = ImageColorAllocate($this->ih, 0xFF & ($this->background >> 0x10), 0xFF & ($this->background >> 0x8), 0xFF & $this->background);
-        $color[1] = ImageColorAllocate($this->ih, 0xFF & ($this->foreground >> 0x10), 0xFF & ($this->foreground >> 0x8), 0xFF & $this->foreground);
-        $color[2] = ImageColorAllocate($this->ih, 160,160,160); // greyed
+        $color[0] = ImageColorAllocate(
+            $this->ih,
+            0xFF & ($this->background >> 0x10),
+            0xFF & ($this->background >> 0x8),
+            0xFF & $this->background
+        );
+        $color[1] = ImageColorAllocate(
+            $this->ih,
+            0xFF & ($this->foreground >> 0x10),
+            0xFF & ($this->foreground >> 0x8),
+            0xFF & $this->foreground
+        );
+        $color[2] = ImageColorAllocate($this->ih, 160, 160, 160); // greyed
 
         imagefilledrectangle($this->ih, 0, 0, $this->width, $this->height, $color[0]);
 
 
         // Gravure du code
-        for ($i = 0; $i < $nb_elem; $i++)
-        {
-
+        for ($i = 0; $i < $nb_elem; $i++) {
             // Hauteur des barres dans l'image
             $intH = $this->height;
-            if( $this->hr != '' )
-            {
-                switch ($this->type)
-                {
-                  case "EAN" :
-                  case "UPC" :
-                    if($i<=2 || $i>=($nb_elem-3) || ($i>=($nb_elem/2)-2 && $i<=($nb_elem/2)+2)) $intH-=6; else $intH-=11;
-                  break;
-                  default :
-                    if($i>0 && $i<($nb_elem-1)) $intH-=11;
+            if ($this->hr != '') {
+                switch ($this->type) {
+                    case "EAN" :
+                    case "UPC" :
+                        if ($i <= 2 || $i >= ($nb_elem - 3) || ($i >= ($nb_elem / 2) - 2 && $i <= ($nb_elem / 2) + 2)) {
+                            $intH -= 6;
+                        } else {
+                            $intH -= 11;
+                        }
+                        break;
+                    default :
+                        if ($i > 0 && $i < ($nb_elem - 1)) {
+                            $intH -= 11;
+                        }
                 }
             }
 
             // Gravure des barres
             $fill_color = $this->encoded{$i};
-            switch ($this->type)
-            {
-              case "POSTNET" :
-                if($fill_color == "1") imagefilledrectangle($this->ih, $posX, ($posY+1), $posX+1, ($posY+20), $color[1]);
-                else imagefilledrectangle($this->ih, $posX, ($posY+12), $posX+1, ($posY+20), $color[1]);
-                $intL = 4 ;
-              break;
-              case "KIX" :
-                if($fill_color == "0") imagefilledrectangle($this->ih, $posX, ($posY+1), $posX+1, ($posY+13), $color[1]);
-                elseif($fill_color == "1") imagefilledrectangle($this->ih, $posX, ($posY+7), $posX+1, ($posY+19), $color[1]);
-                elseif($fill_color == "2") imagefilledrectangle($this->ih, $posX, ($posY+7), $posX+1, ($posY+13), $color[1]);
-                else imagefilledrectangle($this->ih, $posX, ($posY+1), $posX+1, ($posY+19), $color[1]);
-                $intL = 4 ;
-              break;
-              case "CMC7" :
-                $tmp = PiBarCodeType::CMC7[$fill_color];
-                $coord = explode( "|", $tmp );
+            switch ($this->type) {
+                case "POSTNET" :
+                    if ($fill_color == "1") {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 1), $posX + 1, ($posY + 20), $color[1]);
+                    } else {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 12), $posX + 1, ($posY + 20), $color[1]);
+                    }
+                    $intL = 4;
+                    break;
+                case "KIX" :
+                    if ($fill_color == "0") {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 1), $posX + 1, ($posY + 13), $color[1]);
+                    } elseif ($fill_color == "1") {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 7), $posX + 1, ($posY + 19), $color[1]);
+                    } elseif ($fill_color == "2") {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 7), $posX + 1, ($posY + 13), $color[1]);
+                    } else {
+                        imagefilledrectangle($this->ih, $posX, ($posY + 1), $posX + 1, ($posY + 19), $color[1]);
+                    }
+                    $intL = 4;
+                    break;
+                case "CMC7" :
+                    $tmp = PiBarCodeType::CMC7[$fill_color];
+                    $coord = explode("|", $tmp);
 
-                for ($j = 0; $j < sizeof($coord); $j++)
-                {
-                    $pts = explode( "-", $coord[$j] );
-                    $deb = explode( ",", $pts[0] );
-                    $X1 = $deb[0] + $posX ;
-                    $Y1 = $deb[1] + 5 ;
-                    $fin = explode( ",", $pts[1] );
-                    $X2 = $fin[0] + $posX ;
-                    $Y2 = $fin[1] + 5 ;
+                    for ($j = 0; $j < sizeof($coord); $j++) {
+                        $pts = explode("-", $coord[$j]);
+                        $deb = explode(",", $pts[0]);
+                        $X1 = $deb[0] + $posX;
+                        $Y1 = $deb[1] + 5;
+                        $fin = explode(",", $pts[1]);
+                        $X2 = $fin[0] + $posX;
+                        $Y2 = $fin[1] + 5;
 
-                    imagefilledrectangle($this->ih, $X1, $Y1, $X2, $Y2, $color[1]);
-                }
-                $intL = 24 ;
-              break;
-              default :
-                if($fill_color == "1") imagefilledrectangle($this->ih, $posX, $posY, $posX, ($posY+$intH), $color[1]);
+                        imagefilledrectangle($this->ih, $X1, $Y1, $X2, $Y2, $color[1]);
+                    }
+                    $intL = 24;
+                    break;
+                default :
+                    if ($fill_color == "1") {
+                        imagefilledrectangle($this->ih, $posX, $posY, $posX, ($posY + $intH), $color[1]);
+                    }
             }
 
             //Déplacement du pointeur
@@ -735,53 +778,101 @@ class PiBarCode
 
         $text = ($this->hr == 'AUTO' ? $this->code : $this->hr);
 
-        switch ($this->type)
-        {
-          case "ERR" :
-            $ifw = imagefontwidth(3);
-            imagestring($this->ih, 3, floor( (($this->width)-($ifw * 7)) / 2 ), 1, "ERROR :", $color[1]);
-            imagestring($this->ih, 2, 10, 13, $this->fullCode, $color[1]);
-            $ifw = imagefontwidth(1);
-            imagestring($this->ih, 1, ($this->width)-($ifw * 9)-2, $this->height - $ifh, "Pitoo.com", $color[2]);
-          break;
-          case "EAN" :
-                if ($text != '') if((strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0)) imagestring($this->ih, 3, $txtPosX-7, $this->height - $ifh, substr($this->fullCode,-13,1), $color[1]);
-          case "UPC" :
-            if ($text != '')
-            {
-                if(strlen($this->fullCode) > 10) {
-                    imagestring($this->ih, 3, $txtPosX+4, $this->height - $ifh, substr($this->fullCode,1,6), $color[1]);
-                    imagestring($this->ih, 3, $txtPosX+50, $this->height - $ifh, substr($this->fullCode,7,6), $color[1]);
-                } else {
-                    imagestring($this->ih, 3, $txtPosX+4, $this->height - $ifh, substr($this->fullCode,0,4), $color[1]);
-                    imagestring($this->ih, 3, $txtPosX+36, $this->height - $ifh, substr($this->fullCode,4,4), $color[1]);
+        switch ($this->type) {
+            case "ERR" :
+                $ifw = imagefontwidth(3);
+                imagestring($this->ih, 3, floor((($this->width) - ($ifw * 7)) / 2), 1, "ERROR :", $color[1]);
+                imagestring($this->ih, 2, 10, 13, $this->fullCode, $color[1]);
+                $ifw = imagefontwidth(1);
+                imagestring(
+                    $this->ih,
+                    1,
+                    ($this->width) - ($ifw * 9) - 2,
+                    $this->height - $ifh,
+                    "Pitoo.com",
+                    $color[2]
+                );
+                break;
+            case "EAN" :
+                if ($text != '') {
+                    if ((strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0)) {
+                        imagestring(
+                            $this->ih,
+                            3,
+                            $txtPosX - 7,
+                            $this->height - $ifh,
+                            substr($this->fullCode, -13, 1),
+                            $color[1]
+                        );
+                    }
                 }
-            }
-          break;
-          case "CMC7" :
-          break;
-          default :
-            if ($text != '') imagestring($this->ih, 3, intval((($this->width)-($ifw * strlen($text)))/2)+1, $this->height - $ifh, $text, $color[1]);
-
+            case "UPC" :
+                if ($text != '') {
+                    if (strlen($this->fullCode) > 10) {
+                        imagestring(
+                            $this->ih,
+                            3,
+                            $txtPosX + 4,
+                            $this->height - $ifh,
+                            substr($this->fullCode, 1, 6),
+                            $color[1]
+                        );
+                        imagestring(
+                            $this->ih,
+                            3,
+                            $txtPosX + 50,
+                            $this->height - $ifh,
+                            substr($this->fullCode, 7, 6),
+                            $color[1]
+                        );
+                    } else {
+                        imagestring(
+                            $this->ih,
+                            3,
+                            $txtPosX + 4,
+                            $this->height - $ifh,
+                            substr($this->fullCode, 0, 4),
+                            $color[1]
+                        );
+                        imagestring(
+                            $this->ih,
+                            3,
+                            $txtPosX + 36,
+                            $this->height - $ifh,
+                            substr($this->fullCode, 4, 4),
+                            $color[1]
+                        );
+                    }
+                }
+                break;
+            case "CMC7" :
+                break;
+            default :
+                if ($text != '') {
+                    imagestring(
+                        $this->ih,
+                        3,
+                        intval((($this->width) - ($ifw * strlen($text))) / 2) + 1,
+                        $this->height - $ifh,
+                        $text,
+                        $color[1]
+                    );
+                }
         }
 
         // de temps à autre, ajouter pitoo.com *** Merci de ne pas supprimer cette fonction ***
         $ifw = imagefontwidth(1) * 9;
-        if ((rand(0,50)<1) && ($this->height >= $ifw)) imagestringup($this->ih, 1, $nb_elem + 12, $this->height - 2, "Pitoo.com", $color[2]);
+        if ((rand(0, 50) < 1) && ($this->height >= $ifw)) {
+            imagestringup($this->ih, 1, $nb_elem + 12, $this->height - 2, "Pitoo.com", $color[2]);
+        }
 
         // impression du type de code (si demandé)
-        if ($this->showType == 'Y')
-        {
-            if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0) && ($text != ''))
-            {
+        if ($this->showType == 'Y') {
+            if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode{0} > 0) && ($text != '')) {
                 imagestringup($this->ih, 1, 0, $this->height - 12, $this->type, $color[2]);
-            }
-            elseif ($this->type == "POSTNET")
-            {
+            } elseif ($this->type == "POSTNET") {
                 imagestringup($this->ih, 1, 0, $this->height - 2, "POST", $color[2]);
-            }
-            elseif ($this->type != "ERR")
-            {
+            } elseif ($this->type != "ERR") {
                 imagestringup($this->ih, 1, 0, $this->height - 2, $this->type, $color[2]);
             }
         }
@@ -789,84 +880,90 @@ class PiBarCode
 
 
     /**
-    * Show Image
-    */
+     * Show Image
+     */
     function showBarcodeImage()
     {
         $this->checkCode();
         $this->encode();
 
-        if ($this->fileType == 'GIF')
-        {
-            Header( "Content-type: image/gif");
+        if ($this->fileType == 'GIF') {
+            Header("Content-type: image/gif");
             imagegif($this->ih);
-        }
-        elseif ($this->fileType == 'JPG')
-        {
-            Header( "Content-type: image/jpeg");
+        } elseif ($this->fileType == 'JPG') {
+            Header("Content-type: image/jpeg");
             imagejpeg($this->ih);
-        }
-        else
-        {
-            Header( "Content-type: image/png");
+        } else {
+            Header("Content-type: image/png");
             imagepng($this->ih);
         }
     }
 
     /**
-    * Save Image
-    */
+     * Save Image
+     */
     function writeBarcodeFile($file)
     {
         $this->checkCode();
         $this->encode();
 
-        if ($this->fileType == 'GIF')     imagegif($this->ih, $file);
-        elseif ($this->fileType == 'JPG') imagejpeg($this->ih, $file);
-        else                              imagepng($this->ih, $file);
+        if ($this->fileType == 'GIF') {
+            imagegif($this->ih, $file);
+        } elseif ($this->fileType == 'JPG') {
+            imagejpeg($this->ih, $file);
+        } else {
+            imagepng($this->ih, $file);
+        }
     }
 
 }
 
 
 /**
-* Compatibilité avec les versions précédentes
-*
-* si appel direct de la bibliothèque, générer l'image à la volée
-*/
-if (strpos($_SERVER['PHP_SELF'], 'PiBarCode.php'))
-{
-	$height = 80;
-	$width = 0;
-	$readable = 'N';
-	$showtype = 'N';
-	$color = '#000000';
-	$bgcolor = '#FFFFFF';
-	$zoom = 1;
+ * Compatibilité avec les versions précédentes
+ *
+ * si appel direct de la bibliothèque, générer l'image à la volée
+ */
+if (strpos($_SERVER['PHP_SELF'], 'PiBarCode.php')) {
+    $height = 80;
+    $width = 0;
+    $readable = 'N';
+    $showtype = 'N';
+    $color = '#000000';
+    $bgcolor = '#FFFFFF';
+    $zoom = 1;
 
-	extract($_GET);
+    extract($_GET);
 
-	// ***** Création de l'objet
-	$objCode = new PiBarCode();
+    // ***** Création de l'objet
+    $objCode = new PiBarCode();
 
-	$type = strtoupper($type);
+    $type = strtoupper($type);
 
-	// ***** Hauteur / Largeur
-	if( isset($height) || isset($width) ) $objCode->setSize($height, $width);
+    // ***** Hauteur / Largeur
+    if (isset($height) || isset($width)) {
+        $objCode->setSize($height, $width);
+    }
 
-	// ***** Autres arguments
-	if( $readable == 'N' ) $objCode->setText('');
-	if( $showtype == 'N' ) $objCode->hideCodeType();
+    // ***** Autres arguments
+    if ($readable == 'N') {
+        $objCode->setText('');
+    }
+    if ($showtype == 'N') {
+        $objCode->hideCodeType();
+    }
 
-	if( $color )
-	{
-		if( $bgcolor )     $objCode->setColors($color, $bgcolor);
-		else                       $objCode->setColors($color);
-	}
+    if ($color) {
+        if ($bgcolor) {
+            $objCode->setColors($color, $bgcolor);
+        } else {
+            $objCode->setColors($color);
+        }
+    }
 
 
-	$objCode -> setType($type) ;
-	$objCode -> setCode($code) ;
+    $objCode->setType($type);
+    $objCode->setCode($code);
 
-	$objCode -> showBarcodeImage() ;
+    $objCode->showBarcodeImage();
 }
