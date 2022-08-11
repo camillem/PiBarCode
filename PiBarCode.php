@@ -193,7 +193,7 @@ class PiBarCode
     /**
      * Set Barcode Type
      */
-    function setType($type)
+    function setType($type): void
     {
         $this->type = $type;
     }
@@ -201,7 +201,7 @@ class PiBarCode
     /**
      * Set Barcode String
      */
-    function setCode($code)
+    function setCode($code): void
     {
         $this->code = $code;
     }
@@ -209,7 +209,7 @@ class PiBarCode
     /**
      * Set Image Height and Extra-Width
      */
-    function setSize($height, $width = 0, $calmZone = 0)
+    function setSize($height, $width = 0, $calmZone = 0): void
     {
         $this->height = (max($height, 15));
         $this->width = (max($width, 0));
@@ -219,7 +219,7 @@ class PiBarCode
     /**
      * Set the Printed Text under Bars
      */
-    function setText($text = 'AUTO')
+    function setText($text = 'AUTO'): void
     {
         $this->hr = $text;
     }
@@ -227,7 +227,7 @@ class PiBarCode
     /**
      * Disable CodeType printing
      */
-    function hideCodeType()
+    function hideCodeType(): void
     {
         $this->showType = 'N';
     }
@@ -235,7 +235,7 @@ class PiBarCode
     /**
      * Set Colors
      */
-    function setColors($fg, $bg = '#FFFFFF')
+    function setColors($fg, $bg = '#FFFFFF'): void
     {
         $this->foreground = hexdec($fg);
         $this->background = hexdec($bg);
@@ -258,7 +258,7 @@ class PiBarCode
      *
      * calcul ou vérification du Checksum
      */
-    function checkCode()
+    function checkCode(): void
     {
         switch ($this->type) {
             case "C128C" :
@@ -490,7 +490,7 @@ class PiBarCode
      *
      * Encode des symboles (a-Z, 0-9, ...) vers des barres
      */
-    function encode()
+    function encode(): void
     {
         settype($this->fullCode, 'string');
         $lencode = strlen($this->fullCode);
@@ -657,6 +657,9 @@ class PiBarCode
                 $this->codeWidth = (imagefontwidth(2) * $lencode);
                 $this->height = max($this->height, 36);
                 break;
+            default:
+                // ignore
+                break;
         }
 
         $nb_elem = strlen($encodedString);
@@ -790,17 +793,15 @@ class PiBarCode
                 );
                 break;
             case "EAN" :
-                if ($text != '') {
-                    if ((strlen($this->fullCode) > 10) && ($this->fullCode[0] > 0)) {
-                        imagestring(
-                            $this->ih,
-                            3,
-                            $txtPosX - 7,
-                            $this->height - $ifh,
-                            substr($this->fullCode, -13, 1),
-                            $color[1]
-                        );
-                    }
+                if ($text != '' && (strlen($this->fullCode) > 10) && ($this->fullCode[0] > 0)) {
+                    imagestring(
+                        $this->ih,
+                        3,
+                        $txtPosX - 7,
+                        $this->height - $ifh,
+                        substr($this->fullCode, -13, 1),
+                        $color[1]
+                    );
                 }
             case "UPC" :
                 if ($text != '') {
@@ -898,7 +899,7 @@ class PiBarCode
     /**
      * Save Image
      */
-    function writeBarcodeFile($file)
+    function writeBarcodeFile($file): void
     {
         $this->checkCode();
         $this->encode();
