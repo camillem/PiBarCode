@@ -249,10 +249,13 @@ class PiBarCode
     /**
      * Set File Type (PNG, GIF or JPG)
      */
-    function setFileType($ft = 'PNG')
+    function setFileType($fileType = 'PNG'): void
     {
-        $ft = strtoupper($ft);
-        $this->fileType = ($ft == 'GIF' ? 'GIF' : ($ft == 'JPG' ? 'JPG' : 'PNG'));
+        $fileType = strtoupper($fileType);
+        $this->fileType = 'PNG';
+        if ($fileType === 'GIF' || $fileType === 'JPG') {
+            $this->fileType = $fileType;
+        }
     }
 
     /**
