@@ -265,7 +265,7 @@ class PiBarCode
         switch ($this->type) {
             case "C128C" :
 
-                if (preg_match("/^[0-9]{2,48}$/", $this->code)) {
+                if (preg_match("/^\d{2,48}$/", $this->code)) {
                     $tmp = strlen($this->code);
                     if (($tmp % 2) != 0) {
                         $this->fullCode = '0' . $this->code;
@@ -309,7 +309,7 @@ class PiBarCode
                 $factor = 3;
                 $checksum = 0;
 
-                if (preg_match("/^[0-9]{8}$/", $this->code) || preg_match("/^[0-9]{13}$/", $this->code)) {
+                if (preg_match("/^\d{8}$/", $this->code) || preg_match("/^\d{13}$/", $this->code)) {
                     for ($index = ($long - 1); $index > 0; $index--) {
                         $checksum += intval($this->code{$index - 1}) * $factor;
                         $factor = 4 - $factor;
@@ -322,7 +322,7 @@ class PiBarCode
                     } else {
                         $this->fullCode = $this->code;
                     }
-                } elseif (preg_match("/^[0-9]{7}$/", $this->code) || preg_match("/^[0-9]{12}$/", $this->code)) {
+                } elseif (preg_match("/^\d{7}$/", $this->code) || preg_match("/^\d{12}$/", $this->code)) {
                     for ($index = $long; $index > 0; $index--) {
                         $checksum += intval($this->code{$index - 1}) * $factor;
                         $factor = 4 - $factor;
@@ -345,7 +345,7 @@ class PiBarCode
 
             case "C25" :
 
-                if (preg_match("/^[0-9]{1,48}$/", $this->code)) {
+                if (preg_match("/^\d{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 3;
                     $long = strlen($this->code);
@@ -366,7 +366,7 @@ class PiBarCode
                 break;
             case "C39" :
 
-                if (preg_match("/^[0-9A-Z\-\.\$\/+% ]{1,48}$/i", $this->code)) {
+                if (preg_match("/^[\dA-Z\-.\$\/+% ]{1,48}$/i", $this->code)) {
                     $this->fullCode = '*' . $this->code . '*';
                 } else {
                     $this->type = "ERR";
@@ -376,7 +376,7 @@ class PiBarCode
                 break;
             case "CODABAR" :
 
-                if (!preg_match("/^(A|B|C|D)[0-9\-\$:\/\.\+]{1,48}(A|B|C|D)$/i", $this->code)) {
+                if (!preg_match("/^([ABCD])[\d\-\$:\/.+]{1,48}([ABCD])$/i", $this->code)) {
                     $this->type = "ERR";
                     $this->fullCode = "CODABAR START/STOP : ABCD";
                 } else {
@@ -386,7 +386,7 @@ class PiBarCode
                 break;
             case "MSI" :
 
-                if (preg_match("/^[0-9]{1,48}$/", $this->code)) {
+                if (preg_match("/^\d{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 1;
                     $tmp = strlen($this->code);
@@ -407,7 +407,7 @@ class PiBarCode
                 break;
             case "C11" :
 
-                if (preg_match("/^[0-9\-]{1,48}$/", $this->code)) {
+                if (preg_match("/^[\d\-]{1,48}$/", $this->code)) {
                     $checksum = 0;
                     $factor = 1;
                     $tmp = strlen($this->code);
@@ -438,8 +438,8 @@ class PiBarCode
                 break;
             case "POSTNET" :
 
-                if (preg_match("/^[0-9]{5}$/", $this->code) || preg_match("/^[0-9]{9}$/", $this->code) || preg_match(
-                        "/^[0-9]{11}$/",
+                if (preg_match("/^\d{5}$/", $this->code) || preg_match("/^\d{9}$/", $this->code) || preg_match(
+                        "/^\d{11}$/",
                         $this->code
                     )) {
                     $checksum = 0;
@@ -460,7 +460,7 @@ class PiBarCode
                 break;
             case "KIX" :
 
-                if (preg_match("/^[A-Z0-9]{1,50}$/", $this->code)) {
+                if (preg_match("/^[A-Z\d]{1,50}$/", $this->code)) {
                     $this->fullCode = $this->code;
                 } else {
                     $this->type = "ERR";
@@ -470,7 +470,7 @@ class PiBarCode
                 break;
             case "CMC7" :
 
-                if (!preg_match("/^[0-9A-E]{1,48}$/", $this->code)) {
+                if (!preg_match("/^[\dA-E]{1,48}$/", $this->code)) {
                     $this->type = "ERR";
                     $this->fullCode = "CMC7 MUST BE NUMERIC or ABCDE";
                 } else {
