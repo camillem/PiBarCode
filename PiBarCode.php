@@ -1188,7 +1188,7 @@ class PiBarCode
 *
 * si appel direct de la bibliothèque, générer l'image à la volée
 */
-if (strpos($_SERVER['PHP_SELF'], 'pi_barcode.php'))
+if (strpos($_SERVER['PHP_SELF'], 'PiBarCode.php'))
 {
 	$height = 80;
 	$width = 0;
