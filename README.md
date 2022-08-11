@@ -24,6 +24,7 @@ The best way to add the library to your project is using [composer](http://getco
 
 Usage
 -----
+
 ```php
 // initialisation
 $bc = new PiBarCode();
@@ -53,7 +54,7 @@ $bc->hideCodeType();
 $bc->setColors('#123456', '#F9F9F9');
 
 // File type: GIF or PNG (default)
-$bc->setFiletype('PNG');
+$bc->setFileType('PNG');
   
 // Send the image to a file
 $bc->writeBarcodeFile('barcode.png');
