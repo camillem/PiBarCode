@@ -27,6 +27,8 @@ Usage
 
 ```php
 // initialisation
+use PiBarCode\PiBarCode;
+
 $bc = new PiBarCode();
   
 // Code to generate
