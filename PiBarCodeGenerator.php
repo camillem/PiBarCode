@@ -7,14 +7,14 @@ namespace PiBarCode;
 class PiBarCodeGenerator
 {
     static function generate(
-        string $type,
         string $code,
+        string $type,
         int $height = 80,
         int $width = 0,
-        string $foreground = '#000000',
-        string $bgColor = '#FFFFFF',
         bool $readable = false,
-        bool $showType = false
+        bool $showType = true,
+        string $foreground = '000000',
+        string $bgColor = 'FFFFFF'
     ): void {
         $type = strtoupper($type);
 

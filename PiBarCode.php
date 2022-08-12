@@ -117,8 +117,8 @@ namespace PiBarCode;
 
 class PiBarCode
 {
-    private const BLACK = '#000000';
-    private const WHITE = '#FFFFFF';
+    private const BLACK = '000000';
+    private const WHITE = 'FFFFFF';
 
     /**
      * @var string
@@ -157,12 +157,12 @@ class PiBarCode
     /**
      * @var string
      */
-    private $hr = 'HR';
+    private $hr = 'AUTO';
 
     /**
-     * @var string
+     * @var bool
      */
-    private $showType = 'Y';
+    private $showType = true;
 
     /**
      * @var float|int
@@ -229,16 +229,19 @@ class PiBarCode
      */
     public function hideCodeType(): void
     {
-        $this->showType = 'N';
+        $this->showType = false;
     }
 
     /**
      * Set Colors
      */
-    public function setColors($fg, $bg = '#FFFFFF'): void
+    public function setColors($foreground, $background = self::WHITE): void
     {
-        $this->foreground = hexdec($fg);
-        $this->background = hexdec($bg);
+        $background = preg_replace("/[^\dA-Fa-f]/", '', $background);
+        $foreground = preg_replace("/[^\dA-Fa-f]/", '', $foreground);
+
+        $this->foreground = hexdec($foreground);
+        $this->background = hexdec($background);
     }
 
     /**
@@ -262,13 +265,13 @@ class PiBarCode
         $this->encode();
 
         if ($this->fileType == 'GIF') {
-            Header("Content-type: image/gif");
+            header("Content-type: image/gif");
             imagegif($this->ih);
         } elseif ($this->fileType == 'JPG') {
-            Header("Content-type: image/jpeg");
+            header("Content-type: image/jpeg");
             imagejpeg($this->ih);
         } else {
-            Header("Content-type: image/png");
+            header("Content-type: image/png");
             imagepng($this->ih);
         }
     }
@@ -464,7 +467,7 @@ class PiBarCode
                     if ($checksum == 10) {
                         $this->fullCode = $this->code . "-";
                     } else {
-                        $this->fullCode .= $this->code . $checksum;
+                        $this->fullCode = $this->code . $checksum;
                     }
                 } else {
                     $this->type = "ERR";
@@ -900,7 +903,7 @@ class PiBarCode
         }
 
         // impression du type de code (si demandé)
-        if ($this->showType == 'Y') {
+        if ($this->showType === true) {
             if (($this->type == "EAN") && (strlen($this->fullCode) > 10) && ($this->fullCode[0] > 0) && ($text != '')) {
                 imagestringup($this->ih, 1, 0, $this->height - 12, $this->type, $color[2]);
             } elseif ($this->type == "POSTNET") {
