@@ -6,9 +6,8 @@
     "ext-gd": "*"
   },
   "autoload": {
-    "psr-4": { "PiBarCode\\": "" },
-    "classmap": [
-      "src/HtmlToDocx/"
-    ]
+    "psr-4": {
+      "PiBarCode\\": ""
+    }
   }
 }
