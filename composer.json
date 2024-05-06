@@ -1,6 +1,7 @@
 {
   "name": "rafikhaceb/pi-barcode",
   "description": "Composer ready for pi_barcode (https://www.pitoo.com/codes-a-barres-p3)",
+  "license":"GPL-3.0-only",
   "require": {
     "php": "^7.2 || ^8.0",
     "ext-gd": "*"
